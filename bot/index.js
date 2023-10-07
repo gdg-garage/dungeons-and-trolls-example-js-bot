@@ -1,29 +1,52 @@
 const DungeonsAndTrolls = require('dungeons_and_trolls');
 DungeonsAndTrolls.ApiClient.instance.authentications.ApiKeyAuth.apiKey = process.argv[2] || "PASTE_YOUR_API_KEY_HERE";
 DungeonsAndTrolls.ApiClient.instance.basePath = process.argv[3] || "https://docker.tivvit.cz";
-
 let apiInstance = new DungeonsAndTrolls.DungeonsAndTrollsApi();
 
-var gameState
+var gameState;
 
 function fetchGameState() {
+	console.log("fetching game state");
 	let opts = {
-		'blocking': true, // Boolean | default false
-		'items': true // Boolean | default true
+		'blocking': true,
+		'items': true
 	};
-	apiInstance.dungeonsAndTrollsGame(opts, (error, data, response) => {
-		if (error) {
-			console.error(error);
-		} else {
-			gameState = data;
-			console.log("position: " + gameState.currentLevel + " - " + gameState.currentPosition.positionX + ", " + gameState.currentPosition.positionY);
-		}
-	});
-}
+	return new Promise((resolve, reject) => {
+		apiInstance.dungeonsAndTrollsGame(opts, (error, data, response) => {
+			if (error)
+				return reject(error);
+			resolve(data);
+		});
+	})
+};
 
-function timerLoop() {
-	fetchGameState();
+function spendSkillPoints() {
+	console.log("spending skill points");
+	let attributes = new DungeonsAndTrolls.DungeonsandtrollsAttributes();
+	attributes.strength = gameState.character.skillPoints;
+	let opts = {
+		'blocking': false
+	};
+	return new Promise((resolve, reject) => {
+		apiInstance.dungeonsAndTrollsAssignSkillPoints(attributes, opts, (error, data, response) => {
+			if (error)
+				return reject(error);
+			resolve(data);
+		});
+	});
+};
+
+async function timerLoop() {
+	try {
+		gameState = await fetchGameState();
+		console.log("position: " + gameState.currentLevel + " - " + gameState.currentPosition.positionX + ", " + gameState.currentPosition.positionY);
+		if (gameState.character.skillPoints > 0) {
+			await spendSkillPoints();
+		}
+	} catch (error) {
+		console.error(error);
+	}
 	setTimeout(timerLoop, 0);
-}
+};
 
 setTimeout(timerLoop, 0);
