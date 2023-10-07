@@ -1,0 +1,14 @@
+{
+  "name": "dungeons-and-trolls-example-js-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dungeons_and_trolls": "^1.7.0"
+  }
+}
