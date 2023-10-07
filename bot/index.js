@@ -36,12 +36,38 @@ function spendSkillPoints() {
 	});
 };
 
+function walkTo(position) {
+	console.log("walking to " + position.positionX + ", " + position.positionY);
+	let opts = {
+		'blocking': true
+	};
+	return new Promise((resolve, reject) => {
+		apiInstance.dungeonsAndTrollsMove(position, opts, (error, data, response) => {
+			if (error)
+				return reject(error);
+			resolve(data);
+		});
+	});
+}
+
+function findStairs() {
+	let level = gameState.map.levels[0];
+	for (let obj of level.objects) {
+		if (obj.isStairs)
+			return obj.position;
+	}
+}
+
 async function timerLoop() {
 	try {
 		gameState = await fetchGameState();
-		console.log("position: " + gameState.currentLevel + " - " + gameState.currentPosition.positionX + ", " + gameState.currentPosition.positionY);
+		console.log("position: " + gameState.currentLevel + ": " + gameState.currentPosition.positionX + ", " + gameState.currentPosition.positionY);
 		if (gameState.character.skillPoints > 0) {
 			await spendSkillPoints();
+		}
+		let stairs = findStairs();
+		if (stairs) {
+			await walkTo(stairs);
 		}
 	} catch (error) {
 		console.error(error);
