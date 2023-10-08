@@ -77,20 +77,18 @@ function walkTo(position) {
 
 function useSkill(skill, target) {
 	console.log("using skill " + skill.name);
-	let use = new DungeonsAndTrolls.DungeonsandtrollsSkillUse();
-	use.skillId = skill.id;
+	let skillUse = new DungeonsAndTrolls.DungeonsandtrollsSkillUse();
+	skillUse.skillId = skill.id;
 	if (skill.target == "position") {
-		use.position = target;
+		skillUse.position = target;
 	} else if (skill.target == "character") {
-		use.targetId = target;
+		skillUse.targetId = target;
 	}
-	let commandsBatch = new DungeonsAndTrolls.DungeonsandtrollsCommandsBatch();
-	commandsBatch.skill = use;
 	let opts = {
 		'blocking': true
 	};
 	return new Promise((resolve, reject) => {
-		apiInstance.dungeonsAndTrollsCommands(commandsBatch, opts, (error, data, response) => {
+		apiInstance.dungeonsAndTrollsSkill(skillUse, opts, (error, data, response) => {
 			if (error)
 				return reject(error);
 			resolve(data);
@@ -144,7 +142,7 @@ function respawn() {
 async function timerLoop() {
 	try {
 		gameState = await fetchGameState();
-		console.log("position: " + gameState.currentLevel + ": " + gameState.currentPosition.positionX + ", " + gameState.currentPosition.positionY);
+		console.log("level: " + gameState.currentLevel + ", position: " + gameState.currentPosition.positionX + ", " + gameState.currentPosition.positionY);
 		console.log("life: " + gameState.character.attributes.life + ", mana: " + gameState.character.attributes.mana +", stamina: " + gameState.character.attributes.stamina);
 		if (false) {
 			respawn();
