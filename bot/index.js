@@ -62,7 +62,7 @@ function buyWeapon() {
 };
 
 function walkTo(position) {
-	console.log("walking to " + position.positionX + ", " + position.positionY);
+	console.log("walking to: " + position.positionX + ", " + position.positionY);
 	let opts = {
 		'blocking': true
 	};
@@ -76,7 +76,7 @@ function walkTo(position) {
 }
 
 function useSkill(skill, target) {
-	console.log("using skill " + skill.name);
+	console.log("using skill: " + skill.name);
 	let skillUse = new DungeonsAndTrolls.DungeonsandtrollsSkillUse();
 	skillUse.skillId = skill.id;
 	if (skill.target == "position") {
@@ -96,10 +96,30 @@ function useSkill(skill, target) {
 	});
 }
 
+function evaluateParameters(params) {
+	var sum = 0;
+	sum += (params.strength || 0) * (gameState.character.attributes.strength || 0);
+	sum += (params.dexterity || 0) * (gameState.character.attributes.dexterity || 0);
+	sum += (params.intelligence || 0) * (gameState.character.attributes.intelligence || 0);
+	sum += (params.willpower || 0) * (gameState.character.attributes.willpower || 0);
+	sum += (params.constitution || 0) * (gameState.character.attributes.constitution || 0);
+	sum += (params.slashResist || 0) * (gameState.character.attributes.slashResist || 0);
+	sum += (params.pierceResist || 0) * (gameState.character.attributes.pierceResist || 0);
+	sum += (params.fireResist || 0) * (gameState.character.attributes.fireResist || 0);
+	sum += (params.poisonResist || 0) * (gameState.character.attributes.poisonResist || 0);
+	sum += (params.electricResist || 0) * (gameState.character.attributes.electricResist || 0);
+	sum += (params.life || 0) * (gameState.character.attributes.life || 0);
+	sum += (params.stamina || 0) * (gameState.character.attributes.stamina || 0);
+	sum += (params.mana || 0) * (gameState.character.attributes.mana || 0);
+	sum += (params.constant || 0) * 1;
+	return sum;
+}
+
 function attackMonster(monster, mrPos) {
-	console.log("attacking " + monster.name);
+	console.log("attacking: " + monster.name + " (" + monster.lifePercentage + " %)");
 	for (let item of gameState.character.equip) {
 		for (let skill of item.skills) {
+			console.log("estimated damage: " + evaluateParameters(skill.damageAmount)); // ignoring resistances
 			return useSkill(skill, monster.id);
 		}
 	}
@@ -140,10 +160,11 @@ function respawn() {
 }
 
 async function timerLoop() {
+	console.log("----------");
 	try {
 		gameState = await fetchGameState();
 		console.log("level: " + gameState.currentLevel + ", position: " + gameState.currentPosition.positionX + ", " + gameState.currentPosition.positionY);
-		console.log("life: " + gameState.character.attributes.life + ", mana: " + gameState.character.attributes.mana +", stamina: " + gameState.character.attributes.stamina);
+		console.log("life: " + gameState.character.attributes.life + ", mana: " + gameState.character.attributes.mana + ", stamina: " + gameState.character.attributes.stamina);
 		if (false) {
 			respawn();
 			return;
@@ -168,7 +189,8 @@ async function timerLoop() {
 			}
 		}
 	} catch (error) {
-		console.error(error);
+		var j = JSON.parse(error.response.text);
+		console.log("***** failure: " + j.message);
 	}
 	setTimeout(timerLoop, 0);
 };
