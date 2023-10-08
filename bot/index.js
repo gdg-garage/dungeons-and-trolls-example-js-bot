@@ -189,8 +189,12 @@ async function timerLoop() {
 			}
 		}
 	} catch (error) {
-		var j = JSON.parse(error.response.text);
-		console.log("***** failure: " + j.message);
+		if (error?.response?.text) {
+			var j = JSON.parse(error.response.text);
+			console.error("***** failure: " + j.message);
+		} else {
+			console.error(error);
+		}
 	}
 	setTimeout(timerLoop, 0);
 };
