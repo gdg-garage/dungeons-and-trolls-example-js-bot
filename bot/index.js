@@ -189,10 +189,10 @@ async function timerLoop() {
 			}
 		}
 	} catch (error) {
-		if (error?.response?.text) {
+		try {
 			var j = JSON.parse(error.response.text);
 			console.error("***** failure: " + j.message);
-		} else {
+		} catch (e) {
 			console.error(error);
 		}
 	}
