@@ -64,7 +64,7 @@ function buyWeapon() {
 function walkTo(position) {
 	console.log("walking to: " + position.positionX + ", " + position.positionY);
 	let opts = {
-		'blocking': true
+		'blocking': false
 	};
 	return new Promise((resolve, reject) => {
 		apiInstance.dungeonsAndTrollsMove(position, opts, (error, data, response) => {
@@ -85,7 +85,7 @@ function useSkill(skill, target) {
 		skillUse.targetId = target;
 	}
 	let opts = {
-		'blocking': true
+		'blocking': false
 	};
 	return new Promise((resolve, reject) => {
 		apiInstance.dungeonsAndTrollsSkill(skillUse, opts, (error, data, response) => {
