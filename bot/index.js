@@ -1,6 +1,6 @@
 const DungeonsAndTrolls = require('dungeons_and_trolls');
 DungeonsAndTrolls.ApiClient.instance.authentications.ApiKeyAuth.apiKey = process.argv[2] || "PASTE_YOUR_API_KEY_HERE";
-DungeonsAndTrolls.ApiClient.instance.basePath = process.argv[3] || "https://docker.tivvit.cz";
+DungeonsAndTrolls.ApiClient.instance.basePath = process.argv[3] || "10.0.1.63";
 let apiInstance = new DungeonsAndTrolls.DungeonsAndTrollsApi();
 
 var gameState;
