@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dungeons_and_trolls": "^1.7.0"
+    "dungeons_and_trolls": "^1.10.0"
   }
 }
